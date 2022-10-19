@@ -7,6 +7,7 @@ import com.opencsv.exceptions.CsvValidationException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -18,6 +19,7 @@ import java.util.Scanner;
  */
 
 public class driver  {
+
     public static int binSearch (ArrayList<Actor> actorList, String searchItem, int low, int high) {
         int mid;
         if (searchItem.compareTo(actorList.get(low).getName()) >= 0) {
@@ -100,7 +102,20 @@ public class driver  {
         System.out.println("Welcome to the movie wall");
         System.out.print("Enter the name of an actor (or " + '"'+ "EXIT" + '"' + "to quit):");
         Scanner scan = new Scanner(System.in);
-        String actorName = scan.nextLine();
+        String actorName = scan.nextLine().toLowerCase();
+        StringBuilder nameChange = new StringBuilder(actorName);
+        int space = nameChange.indexOf(" ");
+        char actorFirst = (char)(((int) actorName.charAt(0)) - 32);
+        char actorSec = (char)(((int) actorName.charAt(space + 1)) - 32);
+        nameChange.setCharAt(0, actorFirst);
+        nameChange.setCharAt(space + 1, actorSec);
+
+        actorName = nameChange.toString();
+
+
+
+
+
         while (actorName.compareTo("EXIT") != 0 ) {
 
             int indexSearch = binSearch(actorList, actorName, 0, actorList.size() - 1);
@@ -112,19 +127,35 @@ public class driver  {
                     String newName = actorList.get(indexSearch).getName();
                     System.out.println("Actor: " + actorList.get(indexSearch).getName());
                     while(actorList.get(indexSearch).getName().compareTo(newName) == 0) {
-                        System.out.println("* Movie:" + actorList.get(indexSearch).getMovieChar());
+                        System.out.println("* Movie: " + actorList.get(indexSearch).getMovieChar());
                         indexSearch++;
                     }
+                }
+                else if (! Objects.equals(answer, "N")) {
+                    System.out.println("I will take that as a 'No'");
                 }
             }
 
             while(actorList.get(indexSearch).getName().compareTo(actorName) == 0) {
-                System.out.println("* Movie:" + actorList.get(indexSearch).getMovieChar());
+                System.out.println("* Movie: " + actorList.get(indexSearch).getMovieChar());
                 indexSearch++;
             }
 
             System.out.print("Enter the name of an actor (or " + '"'+ "EXIT" + '"' + "to quit):");
             actorName = scan.nextLine();
+            if (! Objects.equals(actorName, "EXIT")) {
+
+                actorName = actorName.toLowerCase();
+                nameChange = new StringBuilder(actorName);
+                space = nameChange.indexOf(" ");
+                actorFirst = (char)(((int) actorName.charAt(0)) - 32);
+                actorSec = (char)(((int) actorName.charAt(space + 1)) - 32);
+                nameChange.setCharAt(0, actorFirst);
+                nameChange.setCharAt(space + 1, actorSec);
+
+                actorName = nameChange.toString();
+
+            }
         }
 
         System.out.println("Thank you for coming to the Movie Wall!");
