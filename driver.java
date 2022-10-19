@@ -19,6 +19,25 @@ import java.util.*;
  */
 
 public class driver  {
+    public int binSearch (ArrayList<Actor> actorList, String searchItem, int low, int high) {
+        int mid = (low + high)/2;
+        int comparingVal = searchItem.compareTo(actorList.get(mid).getName());
+        if(low > high) {
+            return low;
+        }
+
+        else if (comparingVal == 0) {
+            return mid;
+        }
+        else if (comparingVal > 0) {
+            return binSearch(actorList, searchItem, low, mid - 1);
+        }
+        else if (comparingVal < 0) {
+            return binSearch(actorList, searchItem, mid + 1, high);
+        }
+
+        return low;
+    }
 
     public static void main(String[] args) throws IOException, CsvValidationException{
         StringBuilder character = new StringBuilder();
