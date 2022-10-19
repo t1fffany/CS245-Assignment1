@@ -9,8 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
-import java.lang.Math;
-import java.util.*;
+
 
 /**
  * Author: Tiffany Wilson
@@ -19,23 +18,21 @@ import java.util.*;
  */
 
 public class driver  {
-    public int binSearch (ArrayList<Actor> actorList, String searchItem, int low, int high) {
-        int mid = (low + high)/2;
-        int comparingVal = searchItem.compareTo(actorList.get(mid).getName());
-        if(low > high) {
-            return low;
-        }
+    public static int binSearch (ArrayList<Actor> actorList, String searchItem, int low, int high) {
+        int mid;
+        if (searchItem.compareTo(actorList.get(low).getName()) >= 0) {
+            mid = low + (high - low) /2;
 
-        else if (comparingVal == 0) {
-            return mid;
-        }
-        else if (comparingVal > 0) {
-            return binSearch(actorList, searchItem, low, mid - 1);
-        }
-        else if (comparingVal < 0) {
+            if (actorList.get(mid).getName().equals(searchItem)) {
+                return mid;
+            }
+
+            if (actorList.get(mid).getName().compareTo(searchItem) > 0) {
+                return binSearch(actorList, searchItem, low, mid -1 );
+            }
+
             return binSearch(actorList, searchItem, mid + 1, high);
         }
-
         return low;
     }
 
@@ -92,55 +89,40 @@ public class driver  {
             }
             stream.close();
         mergeSort actorSort = new mergeSort(actorList);
-        ArrayList <Actor> people = actorSort.getSortedArray();
+        actorSort.sortGivenArray();
+        int val = 0;
+        for(Actor i:actorSort.getSortedArray()){
+            actorList.set(val, i);
+            val++;
+        }
+
 
         System.out.println("Welcome to the movie wall");
         System.out.print("Enter the name of an actor (or " + '"'+ "EXIT" + '"' + "to quit):");
         Scanner scan = new Scanner(System.in);
         String actorName = scan.nextLine();
         while (actorName.compareTo("EXIT") != 0 ) {
-            int minimum = 20;
-            int index = 0;
-            String wordSearch = "nothing";
-            for (int i = 0; i < actorList.size(); i++) {
 
-                if (people.get(i).getName().compareTo(actorName) == 0) {
-                    index = i;
-                    wordSearch = actorName;
-                    break;
+            int indexSearch = binSearch(actorList, actorName, 0, actorList.size() - 1);
 
-
-                }
-                else if((Math.abs(people.get(i).getName().compareTo(actorName)) < minimum)) {
-                    minimum = Math.abs(people.get(i).getName().compareTo(actorName));
-                    wordSearch = people.get(i).getName();
-                    index = i;
-                }
-
-            }
-
-            if (wordSearch.equals(actorName)) {
-                System.out.println("Actor: " + people.get(index).getName());
-                for (int i = 0; i < actorList.size(); i++) {
-                    if(people.get(i).getName().equals(actorName)) {
-                        System.out.println("* Movie: " + people.get(i).getMovieChar());
-                    }
-                }
-            }
-
-            else if (!wordSearch.equals(actorName)){
-                System.out.print("No such actor. Did you mean " + wordSearch + '"' + "(Y/N)" );
+            if (actorList.get(indexSearch).getName().compareTo(actorName) != 0) {
+                System.out.print("No such actor. Did you mean " + actorList.get(indexSearch).getName() + '"' + "(Y/N)" );
                 String answer = scan.nextLine();
                 if (Objects.equals(answer, "Y")) {
-                    System.out.println("Actor: " + people.get(index).getName());
-                    for (int i = 0; i < actorList.size(); i++) {
-                        if (people.get(i).getName().equals(wordSearch)) {
-
-                            System.out.println("* Movie:" + people.get(i).getMovieChar());
-                        }
+                    String newName = actorList.get(indexSearch).getName();
+                    System.out.println("Actor: " + actorList.get(indexSearch).getName());
+                    while(actorList.get(indexSearch).getName().compareTo(newName) == 0) {
+                        System.out.println("* Movie:" + actorList.get(indexSearch).getMovieChar());
+                        indexSearch++;
                     }
                 }
             }
+
+            while(actorList.get(indexSearch).getName().compareTo(actorName) == 0) {
+                System.out.println("* Movie:" + actorList.get(indexSearch).getMovieChar());
+                indexSearch++;
+            }
+
             System.out.print("Enter the name of an actor (or " + '"'+ "EXIT" + '"' + "to quit):");
             actorName = scan.nextLine();
         }
