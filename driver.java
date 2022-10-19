@@ -12,9 +12,13 @@ import java.util.Scanner;
 import java.lang.Math;
 import java.util.*;
 
+/**
+ * Author: Tiffany Wilson
+ * Version 1.0
+ * Date: 10/12/22
+ */
+
 public class driver  {
-
-
 
     public static void main(String[] args) throws IOException, CsvValidationException{
         StringBuilder character = new StringBuilder();
@@ -68,8 +72,6 @@ public class driver  {
                 }
             }
             stream.close();
-           // System.out.println(actorList);
-            //sort(actorList, 0, actorList.size() - 1);
         mergeSort actorSort = new mergeSort(actorList);
         ArrayList <Actor> people = actorSort.getSortedArray();
 
