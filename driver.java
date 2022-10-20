@@ -7,7 +7,6 @@ import com.opencsv.exceptions.CsvValidationException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -19,7 +18,14 @@ import java.util.Scanner;
  */
 
 public class driver  {
-
+    /**
+     *
+     * @param actorList the actor arrayList I want to search
+     * @param searchItem the input search Item the user wants
+     * @param low left-most value to be searched
+     * @param high the right-most value to be searched
+     * @return returns index of where the searchItem is found or what it resembles
+     */
     public static int binSearch (ArrayList<Actor> actorList, String searchItem, int low, int high) {
         int mid;
         if (searchItem.compareTo(actorList.get(low).getName()) >= 0) {
@@ -38,70 +44,85 @@ public class driver  {
         return low;
     }
 
-    public static void main(String[] args) throws IOException, CsvValidationException{
+    /**
+     *
+     * @param args the file we are reading through
+     * @throws IOException if error while accessing the file
+     */
+
+    public static void main(String[] args) throws IOException{
         StringBuilder character = new StringBuilder();
         StringBuilder name = new StringBuilder();
         ArrayList<Actor> actorList = new ArrayList<>();
 
         InputStream stream = new FileInputStream(args[0]);
-        CSVReader file = new CSVReaderBuilder( new InputStreamReader(stream, StandardCharsets.UTF_8)).withSkipLines(1).build();
-            String [] values = null;
+        try {
+            CSVReader file = new CSVReaderBuilder(new InputStreamReader(stream, StandardCharsets.UTF_8)).withSkipLines(1).build();
+            String[] values = null;
             int colonCount = 0;
-            while((values = file.readNext()) != null) {
+            int region;
+            int brace = 0;
+
+            while ((values = file.readNext()) != null) {
+
                 String castList = values[2];
+                brace = castList.indexOf('}', brace);
 
-                for (int i = 0; i < castList.length(); i++) {
+                while(brace >=0){
 
-                    if (castList.charAt(i) == ':') {
-                        colonCount++;
+                    brace = castList.indexOf('}', brace+1);
+
+                    int i = castList.indexOf(':');
+
+                    colonCount += 1;
+
+                    while (i >= 0 && colonCount < 7) {
+
+                        i = castList.indexOf(':', i+1);
+                        colonCount += 1;
                         if (colonCount == 2) {
-                            i += 3;
+                            region = i + 3;
 
-                            while(castList.charAt(i) != '"'){
-                                character.append(castList.charAt(i));
-                                i++;
+                            while (castList.charAt(region) != '"') {
 
-                            }
-                            i++;
-                        }
-
-                        else if(colonCount == 6) {
-                            i += 3;
-                            while(castList.charAt(i) != '"'){
-                                name.append(castList.charAt(i));
-                                i++;
+                                character.append(castList.charAt(region));
+                                region++;
 
                             }
-                            i++;
-
                         }
+                        else if (colonCount == 6) {
+                            region = i + 3;
+                            while (castList.charAt(region) != '"') {
+                                name.append(castList.charAt(region));
+                                region++;
 
-
-                         if (colonCount == 7){
-                             Actor actor = new Actor(name.toString(), values[1], character.toString());
-                             actorList.add(actor);
-                            colonCount = 0;
-                            character.delete(0, character.length());
-                            name.delete(0, name.length());
+                            }
                         }
 
                     }
-
                 }
+
+                Actor actor = new Actor(name.toString(), values[1], character.toString());
+                actorList.add(actor);
+                colonCount = 0;
+                character.delete(0, character.length());
+                name.delete(0, name.length());
             }
-            stream.close();
+        } catch (IOException | CsvValidationException e) {
+            e.printStackTrace();
+        }
+        stream.close();
         mergeSort actorSort = new mergeSort(actorList);
         actorSort.sortGivenArray();
         int val = 0;
-        for(Actor i:actorSort.getSortedArray()){
-            actorList.set(val, i);
-            val++;
-        }
+        actorList = (actorSort.getSortedArray());
 
 
         System.out.println("Welcome to the movie wall");
         System.out.print("Enter the name of an actor (or " + '"'+ "EXIT" + '"' + "to quit):");
         Scanner scan = new Scanner(System.in);
+
+        //formats the user input
         String actorName = scan.nextLine().toLowerCase();
         StringBuilder nameChange = new StringBuilder(actorName);
         int space = nameChange.indexOf(" ");
@@ -112,16 +133,12 @@ public class driver  {
 
         actorName = nameChange.toString();
 
-
-
-
-
         while (actorName.compareTo("EXIT") != 0 ) {
 
             int indexSearch = binSearch(actorList, actorName, 0, actorList.size() - 1);
 
             if (actorList.get(indexSearch).getName().compareTo(actorName) != 0) {
-                System.out.print("No such actor. Did you mean " + actorList.get(indexSearch).getName() + '"' + "(Y/N)" );
+                System.out.print("No such actor. Did you mean " + '"'+ actorList.get(indexSearch).getName() + '"' + "(Y/N)" );
                 String answer = scan.nextLine();
                 if (Objects.equals(answer, "Y")) {
                     String newName = actorList.get(indexSearch).getName();
@@ -132,7 +149,7 @@ public class driver  {
                     }
                 }
                 else if (! Objects.equals(answer, "N")) {
-                    System.out.println("I will take that as a 'No'");
+                    System.out.println("I will take that as a no...");
                 }
             }
 
@@ -144,7 +161,7 @@ public class driver  {
             System.out.print("Enter the name of an actor (or " + '"'+ "EXIT" + '"' + "to quit):");
             actorName = scan.nextLine();
             if (! Objects.equals(actorName, "EXIT")) {
-
+                //formats the user input
                 actorName = actorName.toLowerCase();
                 nameChange = new StringBuilder(actorName);
                 space = nameChange.indexOf(" ");

@@ -15,6 +15,10 @@ public class Actor {
         movieChar = setMovieChar(movie, character);
     }
 
+    /**
+     *
+     * @return name of actor
+     */
     public String getName() {
         return name;
     }
@@ -23,15 +27,29 @@ public class Actor {
         this.name = name;
     }
 
+    /**
+     *
+     * @return gets the movie and character of the actor
+     */
     public String getMovieChar() {
         return movieChar;
     }
 
+    /**
+     *
+     * @param movie the actor's movie
+     * @param character character the actor played
+     * @return sets the movie and character of actor
+     */
     public String setMovieChar(String movie, String character) {
         return movieChar = movie + " as " + character;
 
     }
 
+    /**
+     *
+     * @return prints the name, movie, and character the actor played
+     */
     public String toString() {
         return (name + " : " + movieChar);
     }
