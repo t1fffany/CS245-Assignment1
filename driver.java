@@ -29,7 +29,7 @@ public class driver  {
     public static int binSearch (ArrayList<Actor> actorList, String searchItem, int low, int high) {
         int mid;
         if (searchItem.compareTo(actorList.get(low).getName()) >= 0) {
-            mid = low + (high - low) /2;
+            mid = low + (high - low) / 2;
 
             if (actorList.get(mid).getName().equals(searchItem)) {
                 return mid;
@@ -68,7 +68,7 @@ public class driver  {
                 String castList = values[2];
                 brace = castList.indexOf('}', brace);
 
-                while(brace >=0){
+                while(brace >= 0){
 
                     brace = castList.indexOf('}', brace+1);
 
@@ -143,6 +143,7 @@ public class driver  {
                 if (Objects.equals(answer, "Y")) {
                     String newName = actorList.get(indexSearch).getName();
                     System.out.println("Actor: " + actorList.get(indexSearch).getName());
+
                     while(actorList.get(indexSearch).getName().compareTo(newName) == 0) {
                         System.out.println("* Movie: " + actorList.get(indexSearch).getMovieChar());
                         indexSearch++;
